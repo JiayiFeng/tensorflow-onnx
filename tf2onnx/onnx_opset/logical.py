@@ -67,8 +67,10 @@ class Equal:
         supported_dtypes = [
             TensorProto.BOOL,
             TensorProto.INT32,
-            TensorProto.INT64
+            TensorProto.INT64,
+            TensorProto.FLOAT
         ]
+        node.domain = "com.microsoft"
         # FIXME: casting is not the same as equal
         target_dtype = TensorProto.INT32
         _add_cast_to_inputs(ctx, node, supported_dtypes, target_dtype)

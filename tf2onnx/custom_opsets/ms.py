@@ -92,3 +92,34 @@ class ConvTransposeWithDynamicPads:
         node.attr.pop("padding")
         if "explicit_paddings" in node.attr:
             node.attr.pop("explicit_paddings")
+
+
+@tf_op("Cumsum")
+class CumSum:
+    @classmethod
+    def version_1(cls, ctx, node, **kwargs):
+        attrs = {}
+        exclusive = node.get_attr('exclusive')
+        if exclusive:
+            attrs['exclusive'] = exclusive.i
+        reverse = node.get_attr('reverse')
+        if reverse:
+            attrs['reverse'] = reverse.i
+        shapes = node.output_shapes
+        dtypes = node.output_dtypes
+        ctx.remove_node(node.name)
+        ctx.make_node("CumSum", inputs=node.input, outputs=node.output, name=node.name,
+                      shapes=shapes, dtypes=dtypes,
+                      domain=constants.MICROSOFT_DOMAIN, attr=attrs)
+
+
+@tf_op("Round")
+class Round:
+    @classmethod
+    def version_1(cls, ctx, node, **kwargs):
+        shapes = node.output_shapes
+        dtypes = node.output_dtypes
+        ctx.remove_node(node.name)
+        ctx.make_node("Round", inputs=node.input, outputs=node.output, name=node.name,
+                      shapes=shapes, dtypes=dtypes,
+                      domain=constants.MICROSOFT_DOMAIN)
